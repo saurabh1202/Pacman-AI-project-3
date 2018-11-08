@@ -131,7 +131,7 @@ class QLearningAgent(ReinforcementAgent):
 
 
 class PacmanQAgent(QLearningAgent):
-    "Exactly the same as QLearningAgent, but with different default parameters"
+    "Exactly the same as QLearningAgent, but with differenceerent default parameters"
 
     def __init__(self, epsilon=0.05,gamma=0.8,alpha=0.2, numTraining=0, **args):
         """
@@ -184,14 +184,21 @@ class ApproximateQAgent(PacmanQAgent):
           where * is the dotProduct operator
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        features = self.featExtractor.getFeatures(state, action) #Get the features
+        total = 0
+        for feature, val in features.iteritems():
+            total += self.weights[feature] * val  
+        return total
 
     def update(self, state, action, nextState, reward):
         """
            Should update your weights based on transition
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        difference = (reward + self.discount * self.computeValueFromQValues(nextState)) - self.getQValue(state,action) #calculating difference
+        weights, fsa = self.getWeights(), self.featExtractor.getFeatures(state,action) 
+        for feature in fsa: 
+           weights[feature] += self.alpha * difference * fsa[feature]
 
     def final(self, state):
         "Called at the end of each game."
